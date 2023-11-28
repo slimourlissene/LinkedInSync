@@ -29,7 +29,6 @@ def define_limit_page(driver, url):
 
     ul = soup.find('ul', class_='artdeco-pagination__pages')
 
-    print(ul)
     limit_page = ul.find_all('li')[-1].text
     return int(limit_page)
 
@@ -42,14 +41,22 @@ def connect_with_relations(driver, url):
     links = soup.find_all('li', class_='reusable-search__result-container')
     for link in links:
         try:
-            wait = WebDriverWait(driver, 10)
-            connect_button = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(@aria-label, 'Invitez')]")))
-            connect_button.click()
-            send_button = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(@aria-label, 'Envoyer maintenant')]")))
-            send_button.click()
-            time.sleep(5)
+            poste = link.find('div', class_='entity-result__primary-subtitle')
+            print(poste.text)
+            if "CTO" in poste.text:
+                connect_button = driver.find_element(
+                    By.XPATH, "//button[contains(@aria-label, 'Invitez')]")
+                connect_button.click()
+                send_button = driver.find_element(
+                    By.XPATH, "//button[contains(@aria-label, 'Ajouter une note')]")
+                send_button.click()
+                note_field = driver.find_element(By.NAME, "message")
+                note_field.send_keys('Your text here')
+                send_note_button = driver.find_element(
+                    By.XPATH, "//button[contains(@aria-label, 'Envoyer maintenant')]")
+                send_note_button.click()
+            if connect_button and send_button:
+                time.sleep(3)
         except:
             pass
 
